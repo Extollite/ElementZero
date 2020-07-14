@@ -1,10 +1,10 @@
-name: CII
+name: CI
 
 on: [push]
 
 env:
   eatpdb_version: v0.0.5
-  bds_version: 1.16.1.02
+  bds_version: 1.16.0.2
 
 jobs:
   build:
