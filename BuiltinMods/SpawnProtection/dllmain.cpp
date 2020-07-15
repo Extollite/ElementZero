@@ -69,8 +69,17 @@ void checkAction(
     switch (action.type) {
     case PlayerActionType::START_BREAK:
     case PlayerActionType::CONTINUE_BREAK:
-    case PlayerActionType::INTERACT_BLOCK:
       if (!Check(entry.player, action.pos.x, action.pos.z)) token("Blocked by SpawnProtection");
+      break;
+    case PlayerActionType::INTERACT_BLOCK:
+      if (!Check(entry.player, action.pos.x, action.pos.z)) {
+      	auto &block  = entry.player->Region.getBlock(action.pos);
+      	auto &legacy = block.LegacyBlock;
+      	if (!legacy.isInteractiveBlock() || legacy.getBlockItemId() == VanillaBlockTypes::mItemFrame->getBlockItemId() ||
+            entry.player->isSneaking()) {
+            token("Blocked by SpawnProtection");
+         }
+      }
     default: break;
     }
   }
