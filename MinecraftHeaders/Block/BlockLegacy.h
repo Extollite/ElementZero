@@ -186,5 +186,5 @@ public:
   MCAPI virtual class Block const *tryLegacyUpgrade(unsigned short) const;
   MCAPI virtual bool dealsContactDamage(class Actor const &, class Block const &, bool) const;
 
-  BUILD_ACCESS(unsigned short, BlockID, 260);
+  BUILD_ACCESS(unsigned short, BlockID, 268);
 };
