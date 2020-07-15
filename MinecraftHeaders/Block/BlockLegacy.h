@@ -61,6 +61,7 @@ public:
   MCAPI virtual bool isSignalSource() const;
   MCAPI virtual bool canBeOriginalSurface() const;
   MCAPI virtual bool isValidAuxValue() const;
+  MCAPI virtual short getBlockItemId() const;
   MCAPI virtual bool canFillAtPos(class BlockSource &, class BlockPos const &, class Block const &) const;
   MCAPI virtual class Block const &
   sanitizeFillBlock(class BlockSource &, class BlockPos const &, class Block const &) const;

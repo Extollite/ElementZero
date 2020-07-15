@@ -87,7 +87,7 @@ void checkInventoryTransaction(
         if (!Check(entry.player, data.pos.x, data.pos.z)) {
           auto &block  = entry.player->Region.getBlock(data.pos);
           auto &legacy = block.LegacyBlock;
-          if (!legacy.isInteractiveBlock() || legacy.BlockID == VanillaBlockTypes::mItemFrame->BlockID ||
+          if (!legacy.isInteractiveBlock() || legacy.getBlockItemId() == VanillaBlockTypes::mItemFrame->getBlockItemId() ||
               entry.player->isSneaking()) {
             data.onTransactionError(*entry.player, InventoryTransactionError::Unexcepted);
             token("Blocked by SpawnProtection");
