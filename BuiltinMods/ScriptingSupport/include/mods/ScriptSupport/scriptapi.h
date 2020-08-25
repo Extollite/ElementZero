@@ -21,9 +21,9 @@
 #  define SCRIPTAPI __declspec(dllimport)
 #endif
 
-class ScriptEngine;
+class MinecraftServerScriptEngine;
 
-template <> SCRIPTAPI ScriptEngine *LocateService<ScriptEngine>();
+template <> SCRIPTAPI MinecraftServerScriptEngine *LocateService<MinecraftServerScriptEngine>();
 
 namespace Mod::Scripting {
 
@@ -46,9 +46,37 @@ struct ScriptAuxData : Mod::AuxHolder {
   ValueHolder holder;
   ScriptAuxData() {
     JsObjectWrapper wrapper;
-    holder.ref = *wrapper;
+    holder = *wrapper;
   }
 };
+
+struct EntityBinding {
+  ActorUniqueID id;
+
+  inline EntityBinding() = default;
+  inline EntityBinding(ActorUniqueID id) : id(id) {}
+
+  SCRIPTAPI Actor *TryFetch() const;
+  SCRIPTAPI Actor &Fetch() const;
+
+  inline std::string GetNameTag() const { return Fetch().getNameTag(); }
+  inline void SetNameTag(std::string tag) { return Fetch().setNameTag(tag); }
+  inline std::string GetEntityName() const { return Fetch().getEntityName(); }
+  inline Vec3 GetPos() const { return Fetch().getPos(); }
+  inline void SetPos(Vec3 pos) { Fetch().move(pos); }
+  inline void Kill() { return Fetch().kill(); }
+  inline bool IsValid() const { return !!TryFetch(); }
+  SCRIPTAPI JsValueRef GetVanillaObject() const;
+
+  SCRIPTAPI static JsValueRef InitProto();
+
+  inline static JsObjectWrapper Create(ActorUniqueID id) {
+    return JsObjectWrapper::FromExternalObject(new EntityBinding(id), InitProto());
+  }
+};
+
+inline JsValueRef ToJs(ActorUniqueID id) { return *EntityBinding::Create(id); }
+template <> struct HasToJs<ActorUniqueID> : std::true_type {};
 
 struct PlayerBinding {
   Mod::PlayerEntry entry;
@@ -64,6 +92,8 @@ struct PlayerBinding {
   inline JsValueRef GetAuxData() const {
     return *Mod::PlayerDatabase::GetInstance().GetAuxAuto<ScriptAuxData>(entry.player).holder;
   }
+  SCRIPTAPI JsValueRef GetVanillaObject() const;
+  SCRIPTAPI JsValueRef GetEntity() const;
 
   inline Mod::OfflinePlayerEntry ToOffline() { return Mod::OfflinePlayerEntry{entry.name, entry.xuid, entry.uuid}; }
   inline bool alive() const { return Mod::PlayerDatabase::GetInstance().Find(entry.xuid).has_value(); }

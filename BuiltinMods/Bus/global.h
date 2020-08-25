@@ -7,12 +7,13 @@
 #include <mods/Bus.h>
 
 struct Settings {
-  std::string name    = "element-zero";
-  std::string host    = "127.0.0.1";
-  unsigned short port = 4040;
+  std::string name               = "element-zero";
+  std::string host               = "127.0.0.1";
+  unsigned short port            = 4040;
+  unsigned short reconnect_delay = 10;
 
   template <typename IO> static inline bool io(IO f, Settings &self, YAML::Node &node) {
-    return f(self.name, node["name"]) && f(self.host, node["host"]) && f(self.port, node["port"]);
+    return f(self.name, node["name"]) && f(self.host, node["host"]) && f(self.port, node["port"]) && f(self.reconnect_delay, node["reconnect-delay"]);
   }
 };
 
@@ -25,8 +26,8 @@ struct RegisterAPI {
 
   inline RegisterAPI(char const *name, bool check, void (*t)()) {
     if (check)
-      GetPreloadList().emplace_back(name, t);
-    else
       GetMap().emplace(name, t);
+    else
+      GetPreloadList().emplace_back(name, t);
   }
 };

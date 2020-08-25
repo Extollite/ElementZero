@@ -29,8 +29,8 @@ public:
     FactoryFn factory;                        // 8
     std::vector<CommandParameterData> params; // 16
     char unk;                                 // 40
-    inline Overload(CommandVersion version, FactoryFn factory, std::initializer_list<CommandParameterData> args)
-        : version(version), factory(factory), params(args), unk(0xFF) {}
+    inline Overload(CommandVersion version, FactoryFn factory, std::vector<CommandParameterData> &&args)
+        : version(version), factory(factory), params(std::move(args)), unk(0xFF) {}
   };
   struct Signature {
     std::string name;                                 // 0
@@ -57,17 +57,16 @@ public:
   };
 #pragma endregion struct definition
 
-  MCAPI void registerCommand(
-      std::string const &, char const *, CommandPermissionLevel, CommandFlag, CommandFlag);
-  MCAPI void registerAlias(std::string const &, std::string const &);
+  MCAPI void registerCommand(std::string const &, char const *, CommandPermissionLevel, CommandFlag, CommandFlag);
+  MCAPI void registerAlias(std::string, std::string);
 
 private:
   MCAPI Signature const *findCommand(std::string const &) const;
   MCAPI void registerOverloadInternal(Signature &, Overload &);
 
   template <typename Type>
-  MCAPI bool parse(
-      void *, ParseToken const &, CommandOrigin const &, int, std::string &, std::vector<std::string> &) const;
+  MCAPI bool
+  parse(void *, ParseToken const &, CommandOrigin const &, int, std::string &, std::vector<std::string> &) const;
 
   MCAPI Symbol addEnumValuesInternal(
       std::string const &, std::vector<std::pair<uint64_t, uint64_t>> const &, typeid_t<CommandRegistry>,
@@ -84,7 +83,6 @@ private:
   MCAPI uint64_t getEnumData(CommandRegistry::ParseToken const &) const;
 
 public:
-
   // 128 std::vector<CommandRegistry::ParseRule>
   // 152 std::map<uint32_t, CommandRegistry::ParseTable>
   // 288 std::map<std::string, uint32_t>
@@ -123,7 +121,7 @@ public:
   template <typename Type, typename IDConverter = CommandRegistry::DefaultIdConverter<Type>>
   unsigned addEnumValues(
       std::string const &name, typeid_t<CommandRegistry> tid,
-      std::initializer_list<std::pair<std::string, Type>> const &values) {
+      std::vector<std::pair<std::string, Type>> const &values) {
     std::vector<std::pair<std::string, uint64_t>> converted;
     IDConverter converter;
     for (auto &value : values) converted.emplace_back(value.first, converter(value.second));
@@ -132,9 +130,9 @@ public:
 
   template <typename T> inline static std::unique_ptr<Command> allocateCommand() { return std::make_unique<T>(); }
   inline void registerOverload(
-      std::string const &name, Overload::FactoryFn factory, std::initializer_list<CommandParameterData> args) {
+      std::string const &name, Overload::FactoryFn factory, std::vector<CommandParameterData> &&args) {
     Signature *signature = const_cast<Signature *>(findCommand(name));
-    auto &overload       = signature->overloads.emplace_back(CommandVersion{}, factory, args);
+    auto &overload       = signature->overloads.emplace_back(CommandVersion{}, factory, std::move(args));
     registerOverloadInternal(*signature, overload);
   }
   template <typename T, typename... Params> inline void registerOverload(std::string const &name, Params... params) {

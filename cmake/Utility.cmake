@@ -28,7 +28,7 @@ function (def_mod name)
     if (NOT PKG_FOUND)
         include (Deps)
     endif ()
-    
+
     cmake_parse_arguments(ARG "BASEMOD" "" "LINK;DELAY_LINK" ${ARGN})
     file (GLOB_RECURSE srcs
         CONFIGURE_DEPENDS *.cpp)
@@ -36,12 +36,11 @@ function (def_mod name)
     add_library (${name} SHARED ${srcs})
     if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include")
         target_include_directories (${name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
-        install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/" DESTINATION Include)
     endif ()
     target_compile_definitions (${name}
         PRIVATE MODNAME=${name} $<${IS_BASEMOD}:EZVERSION=\"${git_version}\">)
     target_link_libraries (${name}
-        Boost::headers
+        Boost::system
         yaml-cpp
         ModLoader
         BedrockServer
