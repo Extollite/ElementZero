@@ -28,9 +28,9 @@ jobs:
         Write-Host ('Installing LLVM')
         Start-Process C:\LLVM.exe -Wait -ArgumentList @('/S', '/D=C:\LLVM')
         Write-Host ('Installed LLVM')
-        echo "CC=clang-cl" >> $GITHUB_ENV
-        echo "CXX=clang-cl" >> $GITHUB_ENV
-        echo "C:/LLVM/bin" >> $GITHUB_PATH
+        echo "CC=C:\\LLVM\\bin\\clang-cl.exe" >> $GITHUB_ENV
+        echo "CXX=C:\\LLVM\\bin\\clang-cl.exe" >> $GITHUB_ENV
+        echo "C:\\LLVM\\bin" >> $GITHUB_PATH
     - name: Install vcpkg
       uses: lukka/run-vcpkg@v5
       with:
