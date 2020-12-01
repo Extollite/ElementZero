@@ -85,7 +85,7 @@ jobs:
 
     - name: Install & Packaging
       run: |
-        cd /d/a/_temp/RelWithDebInfo
+        cd /d/a/_temp/RelWithDebInfo-CI
         "/c/Program Files/CMake/bin/cpack" -G TZST .
         "/c/Program Files/CMake/bin/cpack" -G STGZ .
         "/c/Program Files/CMake/bin/cpack" -G ZIP .
