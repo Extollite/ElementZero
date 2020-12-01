@@ -31,6 +31,16 @@
           "name": "VCPKG_TARGET_TRIPLET",
           "value": "elementzero",
           "type": "STRING"
+        },
+        {
+          "name": "CMAKE_CXX_COMPILER",
+          "value": "C:\\LLVM\\bin\\clang-cl.exe",
+          "type": "FILEPATH"
+        },
+        {
+          "name": "CMAKE_C_COMPILER",
+          "value": "C:\\LLVM\\bin\\clang-cl.exe",
+          "type": "FILEPATH"
         }
       ]
     }
