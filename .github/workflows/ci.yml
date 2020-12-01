@@ -81,7 +81,7 @@ jobs:
       uses: lukka/run-cmake@v2
       with:
         cmakeListsOrSettingsJson: CMakeSettingsJson
-        configurationRegexFilter: 'RelWithDebInfo'
+        configurationRegexFilter: 'RelWithDebInfo-CI'
 
     - name: Install & Packaging
       run: |
