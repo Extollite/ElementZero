@@ -19,3 +19,5 @@ filter: !blacklist
   - regex: "rapidjson"
   - regex: "internal@entt"
   - regex: "no_alloc"
+  - regex: "@moodycamel@@@"
+  - regex: "BN_"
