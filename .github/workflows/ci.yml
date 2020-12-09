@@ -4,12 +4,16 @@ on: [push]
 
 env:
   eatpdb_version: v0.0.5
-  bds_version: 1.16.100.04
+  bds_version: 1.16.200.02
 
 jobs:
   build:
 
     runs-on: windows-latest
+
+    env:
+      CC: clang-cl
+      CXX: clang-cl
 
     steps:
     - name: Checkout
@@ -28,9 +32,8 @@ jobs:
         Write-Host ('Installing LLVM')
         Start-Process C:\LLVM.exe -Wait -ArgumentList @('/S', '/D=C:\LLVM')
         Write-Host ('Installed LLVM')
-        echo "CC=clang-cl" >> $GITHUB_ENV
-        echo "CXX=clang-cl" >> $GITHUB_ENV
-        echo "PATH=C:/LLVM/bin;$env:PATH" >> $GITHUB_ENV
+        Add-Content -Path $Env:GITHUB_PATH -Value "C:\LLVM\bin"
+
     - name: Install vcpkg
       uses: lukka/run-vcpkg@v5
       with:
@@ -78,14 +81,13 @@ jobs:
       shell: bash
 
     - name: Build ElementZero
-      uses: lukka/run-cmake@v2
+      uses: lukka/run-cmake@v3.1
       with:
         cmakeListsOrSettingsJson: CMakeSettingsJson
-        configurationRegexFilter: 'RelWithDebInfo-CI'
 
     - name: Install & Packaging
       run: |
-        cd /d/a/_temp/RelWithDebInfo-CI
+        cd /d/a/_temp/RelWithDebInfo
         "/c/Program Files/CMake/bin/cpack" -G TZST .
         "/c/Program Files/CMake/bin/cpack" -G STGZ .
         "/c/Program Files/CMake/bin/cpack" -G ZIP .
