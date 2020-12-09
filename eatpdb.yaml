@@ -21,3 +21,5 @@ filter: !blacklist
   - regex: "no_alloc"
   - regex: "@moodycamel@@@"
   - regex: "BN_"
+  - regex: "EVP_"
+  - regex: "ASN1_"
